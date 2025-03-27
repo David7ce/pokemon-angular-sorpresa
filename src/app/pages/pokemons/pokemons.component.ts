@@ -1,4 +1,3 @@
-// pages/pokemons/pokemons.component.ts
 import { Component, OnInit } from '@angular/core';
 import { PokemonService } from '../../core/pokemon.service';
 import { Pokemon } from '../../shared/interfaces/pokemon.interface';
@@ -14,20 +13,41 @@ import { CommonModule } from '@angular/common';
 })
 export class PokemonsComponent implements OnInit {
   pokemons$: Observable<Pokemon[]> | undefined;
-  titles: string[] = ['ID', 'Nombre', 'Imagen', 'ID de Movimiento'];
+  titles: string[] = ['ID', 'Nombre', 'Imagen', 'Movimiento']; // TODO: Mostrar nombre del movimiento en lugar del ID
   pokemonData: any[] = [];
+  showModal: boolean = false;
+  selectedPokemon: Pokemon | null = null;
 
-  constructor(private pokemonService: PokemonService) {}
+  constructor(private pokemonService: PokemonService) { }
+
+  viewDetails(pokemon: Pokemon): void {
+    this.selectedPokemon = pokemon;
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.selectedPokemon = null;
+  }
 
   ngOnInit(): void {
     this.pokemons$ = this.pokemonService.getPokemons();
-    this.pokemons$.subscribe((pokemons) => {
-      this.pokemonData = pokemons.map((pokemon) => ({
-        ID: pokemon.id,
-        Nombre: pokemon.name,
-        Imagen: `<img src="${pokemon.imagen}" alt="${pokemon.name}" width="50">`,
-        'ID de Movimiento': pokemon.movements[0]
-      }));
+    this.pokemons$.subscribe(async (pokemons) => {
+      this.pokemonData = await Promise.all(
+        pokemons.map(async (pokemon) => {
+          const movementNames = await Promise.all(
+            pokemon.movements.map((moveId: number) =>
+              this.pokemonService.getMoveNameById(moveId)
+            )
+          );
+          return {
+            'ID': pokemon.id,
+            'Nombre': pokemon.name,
+            'Imagen': `<img src="${pokemon.imagen}" alt="${pokemon.name}" width="50">`,
+            'Movimiento': movementNames.filter((name) => name !== null).join(', ')
+          };
+        })
+      );
     });
   }
 }

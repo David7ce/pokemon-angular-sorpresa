@@ -1,31 +1,56 @@
-<table>
+<table class="table-pokemons">
     <thead>
         <tr>
             <th>Id</th>
             <th>Nombre</th>
             <th>Imagen</th>
-            <th>Id movimiento</th>
+            <th>Movimiento</th>
+            <th>Acción</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let pokemon of pokemons$ | async; let i = index">
-            <td>{{ i + 1 }}</td>
+            <td>
+                <!-- {{ i + 1 }} -->
+                {{ pokemon.id }}
+            </td>
             <td>{{ pokemon.name }}</td>
             <td>
                 <img [src]="pokemon.imagen" [alt]="pokemon.name" width="50" height="50" />
             </td>
             <td *ngIf="pokemon.movements && pokemon.movements.length > 0">
                 <ul>
-                    <li *ngFor="let id_movement of pokemon.movements">{{ id_movement }}</li>
+                    <li *ngFor="let id_movement of pokemon.movements">
+                        <!-- {{ pokemonData[i]?.['Movimiento'] }} -->
+                          {{ id_movement }}
+                    </li>
                 </ul>
+            </td>
+            <td>
+                <button (click)="viewDetails(pokemon)">Ver detalles</button>
             </td>
         </tr>
     </tbody>
 </table>
 
+<!-- Modal -->
+<div class="modal" *ngIf="showModal">
+    <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h2>Detalles del Pokémon</h2>
+        <p><strong>ID:</strong> {{ selectedPokemon?.id }}</p>
+        <p><strong>Nombre:</strong> {{ selectedPokemon?.name }}</p>
+        <p><strong>Imagen:</strong></p>
+        <img [src]="selectedPokemon?.imagen" [alt]="selectedPokemon?.name" width="100" />
+        <p><strong>Movimientos:</strong></p>
+        <ul>
+            <li *ngFor="let move of selectedPokemon?.movements">{{ move }}</li>
+        </ul>
+    </div>
+</div>
 
 <ng-template #loading>
     <tr>
-        <td colspan="3">Loading Pokémon...</td>
+        <td colspan="5">Loading Pokémon...</td>
     </tr>
 </ng-template>

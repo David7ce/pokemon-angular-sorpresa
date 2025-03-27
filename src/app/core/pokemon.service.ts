@@ -9,22 +9,24 @@ import { Pokemon } from '../shared/interfaces/pokemon.interface';
   providedIn: 'root'
 })
 export class PokemonService {
-  private collectionName = 'pokemons';
+  private pokemonsCollection = 'pokemons';
+  private movesCollection = 'moves';
 
-  constructor(private firebaseService: FirebaseService) {}
+  constructor(private firebaseService: FirebaseService) { }
 
-  // Obtener todos los Pokémon usando la funcion getCollection de FirebaseService
+  // Obtener todos los pokemons de la colección
   getPokemons(): Observable<Pokemon[]> {
-    return this.firebaseService.getCollection(this.collectionName);
-  }
- 
-  // Obtener un Pokémon por su ID usando la funcion getDocumentById de FirebaseService
-  getPokemonById(id: string): Promise<Pokemon> {
-    return this.firebaseService.getDocumentById(this.collectionName, id);
+    return this.firebaseService.getCollection(this.pokemonsCollection, 0);
   }
 
-  // Obtener todos los movimientos usando la funcion getCollection de FirebaseService
+  // Obtener todos los movimientos de la colección
   getMoves(): Observable<Moves[]> {
-    return this.firebaseService.getCollection(this.collectionName);
+    return this.firebaseService.getCollection(this.movesCollection, 0);
+  }
+
+  // TODO: Obtener el nombre del movimiento segun su ID
+  async getMoveNameById(moveId: number): Promise<string | null> {
+    const move = await this.firebaseService.getDocumentById(this.movesCollection, moveId.toString());
+    return move ? move.name : null;
   }
 }
