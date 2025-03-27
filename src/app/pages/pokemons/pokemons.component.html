@@ -1,0 +1,36 @@
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Imagen</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- @for (pokemon of pokemons; track pokemon.id) {
+                <tr>
+                    <td>{{ pokemon.id }}</td>
+                    <td>{{ pokemon.name }}</td>
+                    <td><img [src]="pokemon.image" [alt]="pokemon.name" /></td>
+                </tr>
+            } -->
+        <tr *ngFor="let pokemon of pokemons | async; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ pokemon.name | titlecase }}</td>
+            <td>
+                <img [src]="pokemon.imagen" [alt]="pokemon.name" width="50" height="50" />
+            </td>
+            <td *ngIf="pokemon.moves && pokemon.moves.length > 0">
+                <ul>
+                    <li *ngFor="let move of pokemon.moves">{{ move.name }}</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-template #loading>
+    <tr>
+        <td colspan="3">Loading Pokémon...</td>
+    </tr>
+</ng-template>

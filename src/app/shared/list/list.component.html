@@ -1,0 +1,13 @@
+<div *ngFor="let pokemon of pokemons" class="pokemon-item">
+    <h3 *ngIf="pokemon?.name; else noName">{{ pokemon.name }}</h3>
+    <ng-template #noName><h3>Nombre no disponible</h3></ng-template>
+
+    <img *ngIf="pokemon?.image; else noImage" [src]="pokemon.image" [alt]="pokemon.name || 'Pokemon'" />
+    <ng-template #noImage><p>Imagen no disponible</p></ng-template>
+
+    <p *ngIf="pokemon?.type">Type: {{ pokemon.type }}</p>
+    <p *ngIf="pokemon?.moves?.length">Moves: {{ pokemon.moves.join(', ') }}</p>
+    <p *ngIf="!pokemon?.moves?.length">No moves available</p>
+
+    <button (click)="viewDetails()">Ver detalles</button>
+</div>
