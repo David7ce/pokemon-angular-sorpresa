@@ -1,14 +1,15 @@
+// shared/list/list.component.ts
 import { Component, Input } from '@angular/core';
+import { ListItemData } from '../interfaces/list-item-data.interface';
+import { ListItemComponent } from "../list-item/list-item.component";
 
 @Component({
   selector: 'app-list',
-  imports: [],
   templateUrl: './list.component.html',
-  styleUrl: './list.component.scss'
+  styleUrls: ['./list.component.scss'],
+  imports: [ListItemComponent],
 })
 export class ListComponent {
-  viewDetails() {
-    throw new Error('Method not implemented.');
-  }
-  @Input() pokemons: any[] = [];
+  @Input() titles: string[] = [];
+  @Input() data: ListItemData[] = [];
 }

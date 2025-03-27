@@ -1,13 +1,18 @@
-<div *ngFor="let pokemon of pokemons" class="pokemon-item">
-    <h3 *ngIf="pokemon?.name; else noName">{{ pokemon.name }}</h3>
-    <ng-template #noName><h3>Nombre no disponible</h3></ng-template>
+<!-- 
+ TODO: 
+Le tiene que entrar un array de cadenas de texto que son los titulos de las columnas.
+Por el tamaño de ese array construimos todas las columnas. Si me vienen cuantro titulos, pues tendra 4 columnas la tabla.
+Este componente debe pintar datos de forma genérica, es decir sea de pokemon o de lo que sea.
+Por tanto al componente List le tiene que entrar titles: Array<string> y data: any;
+Cada fila ha de llamar a List Item-->
 
-    <img *ngIf="pokemon?.image; else noImage" [src]="pokemon.image" [alt]="pokemon.name || 'Pokemon'" />
-    <ng-template #noImage><p>Imagen no disponible</p></ng-template>
-
-    <p *ngIf="pokemon?.type">Type: {{ pokemon.type }}</p>
-    <p *ngIf="pokemon?.moves?.length">Moves: {{ pokemon.moves.join(', ') }}</p>
-    <p *ngIf="!pokemon?.moves?.length">No moves available</p>
-
-    <button (click)="viewDetails()">Ver detalles</button>
-</div>
+<table>
+    <thead>
+        <tr>
+            <th *ngFor="let title of titles">{{ title }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <app-list-item *ngFor="let item of data" [data]="item" [titles]="titles"></app-list-item>
+    </tbody>
+</table>

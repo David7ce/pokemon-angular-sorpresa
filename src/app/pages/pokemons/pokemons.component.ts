@@ -1,33 +1,33 @@
+// pages/pokemons/pokemons.component.ts
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
 import { PokemonService } from '../../core/pokemon.service';
+import { Pokemon } from '../../shared/interfaces/pokemon.interface';
+import { Observable } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pokemons',
-  standalone: true,
   imports: [CommonModule],
-  templateUrl: 'pokemons.component.html',
-  styleUrls: ['pokemons.component.scss'],
+  standalone: true,
+  templateUrl: './pokemons.component.html',
+  styleUrls: ['./pokemons.component.scss']
 })
 export class PokemonsComponent implements OnInit {
-  pokemons!: Observable<any[]>;
-  moves!: Observable<any[]>;
+  pokemons$: Observable<Pokemon[]> | undefined;
+  titles: string[] = ['ID', 'Nombre', 'Imagen', 'ID de Movimiento'];
+  pokemonData: any[] = [];
 
-  constructor(
-    private pokemonService: PokemonService,
-  ) { }
+  constructor(private pokemonService: PokemonService) {}
 
-  ngOnInit() {
-    this.fetchPokemons();
-    this.fetchMoves();
-  }
-
-  fetchPokemons() {
-    this.pokemons = this.pokemonService.getPokemons();
-  }
-
-  fetchMoves() {
-    this.moves = this.pokemonService.getMoves();
+  ngOnInit(): void {
+    this.pokemons$ = this.pokemonService.getPokemons();
+    this.pokemons$.subscribe((pokemons) => {
+      this.pokemonData = pokemons.map((pokemon) => ({
+        ID: pokemon.id,
+        Nombre: pokemon.name,
+        Imagen: `<img src="${pokemon.imagen}" alt="${pokemon.name}" width="50">`,
+        'ID de Movimiento': pokemon.movements[0]
+      }));
+    });
   }
 }
