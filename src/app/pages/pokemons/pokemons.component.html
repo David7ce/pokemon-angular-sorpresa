@@ -16,11 +16,11 @@
             </td>
             <td>{{ pokemon.name }}</td>
             <td>
-                <img [src]="pokemon.imagen" [alt]="pokemon.name" width="50" height="50" />
+                <img [src]="pokemon.image" [alt]="pokemon.name" width="50" height="50" />
             </td>
-            <td *ngIf="pokemon.movements && pokemon.movements.length > 0">
+            <td *ngIf="pokemon.moves && pokemon.moves.length > 0">
                 <ul>
-                    <li *ngFor="let id_movement of pokemon.movements">
+                    <li *ngFor="let id_movement of pokemon.moves">
                         <!-- {{ pokemonData[i]?.['Movimiento'] }} -->
                           {{ id_movement }}
                     </li>
@@ -41,10 +41,10 @@
         <p><strong>ID:</strong> {{ selectedPokemon?.id }}</p>
         <p><strong>Nombre:</strong> {{ selectedPokemon?.name }}</p>
         <p><strong>Imagen:</strong></p>
-        <img [src]="selectedPokemon?.imagen" [alt]="selectedPokemon?.name" width="100" />
+        <img [src]="selectedPokemon?.image" [alt]="selectedPokemon?.name" width="100" />
         <p><strong>Movimientos:</strong></p>
         <ul>
-            <li *ngFor="let move of selectedPokemon?.movements">{{ move }}</li>
+            <li *ngFor="let move of selectedPokemon?.moves">{{ move }}</li>
         </ul>
     </div>
 </div>

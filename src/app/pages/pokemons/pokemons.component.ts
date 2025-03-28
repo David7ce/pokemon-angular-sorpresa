@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class PokemonsComponent implements OnInit {
   pokemons$: Observable<Pokemon[]> | undefined;
-  titles: string[] = ['ID', 'Nombre', 'Imagen', 'Movimiento']; // TODO: Mostrar nombre del movimiento en lugar del ID
+  titles: string[] = ['ID', 'Nombre', 'Imagen', 'Movimiento'];
   pokemonData: any[] = [];
   showModal: boolean = false;
   selectedPokemon: Pokemon | null = null;
@@ -36,15 +36,15 @@ export class PokemonsComponent implements OnInit {
       this.pokemonData = await Promise.all(
         pokemons.map(async (pokemon) => {
           const movementNames = await Promise.all(
-            pokemon.movements.map((moveId: number) =>
+            pokemon.moves.map((moveId: number) =>
               this.pokemonService.getMoveNameById(moveId)
             )
           );
           return {
             'ID': pokemon.id,
             'Nombre': pokemon.name,
-            'Imagen': `<img src="${pokemon.imagen}" alt="${pokemon.name}" width="50">`,
-            'Movimiento': movementNames.filter((name) => name !== null).join(', ')
+            'Imagen': `<img src="${pokemon.image}" alt="${pokemon.name}" width="50">`,
+            'Movimiento': movementNames.filter((name) => name !== null).join(', ') // TODO: Mostrar nombre del movimiento
           };
         })
       );
