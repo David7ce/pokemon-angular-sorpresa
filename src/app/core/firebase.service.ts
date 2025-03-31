@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Firestore, collection, collectionData, doc, getDoc } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -6,24 +6,21 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FirebaseService {
-  constructor(private firestore: Firestore) {}
+  private firestore = inject(Firestore); // ✅ Se usa `inject()` para evitar errores de contexto
 
-  // private getDataFirestore(): Promise<any> {
-  //   const dbFirestore = this.firestore;
-  //   const docRef = doc(dbFirestore, 'data/doc');
-  //   return getDoc(docRef).then(snapshot => snapshot.exists() ? snapshot.data() : null);
-  // }
-
-  // Obtener todos los documentos de una colección
-  getCollection(collectionName: string, id: number): Observable<any[]> {
-    const ref = collection(this.firestore, collectionName);
-    return collectionData(ref, { idField: 'id' }) as Observable<any[]>;
+  getCollection<T>(collectionName: string): Observable<T[]> {
+    const colRef = collection(this.firestore, collectionName);
+    return collectionData(colRef) as Observable<T[]>; // ✅ Conversión segura de tipo
   }
 
-  // Obtener un documento por ID
-  async getDocumentById(collectionName: string, id: string): Promise<any> {
-    const docRef = doc(this.firestore, `${collectionName}/${id}`);
-    const snapshot = await getDoc(docRef);
-    return snapshot.exists() ? snapshot.data() : null;
+  async getDocumentById<T>(collectionName: string, docId: string): Promise<T | undefined> {
+    try {
+      const docRef = doc(this.firestore, collectionName, docId);
+      const docSnap = await getDoc(docRef);
+      return docSnap.exists() ? (docSnap.data() as T) : undefined; // ✅ Manejo seguro de `undefined`
+    } catch (error) {
+      console.error(`Error obteniendo documento ${docId} de ${collectionName}:`, error);
+      return undefined;
+    }
   }
 }
