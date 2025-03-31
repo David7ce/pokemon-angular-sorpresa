@@ -1,0 +1,18 @@
+<tr>
+  <td>{{ pokemon.id }}</td>
+  <td>{{ pokemon.name }}</td>
+  <td>
+    <img [src]="pokemon.image" [alt]="pokemon.name" width="50" height="50" />
+  </td>
+  <td>
+    <ul>
+      <li *ngFor="let move of pokemon.moves">
+        {{ move || 'Cargando...' }}
+      </li>
+    </ul>
+  </td>
+  <td>
+    <!-- Al hacer clic en el botón, se emite el evento al componente padre -->
+    <button (click)="onViewDetails()">Ver detalles</button>
+  </td>
+</tr>
