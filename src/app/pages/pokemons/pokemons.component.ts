@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PokemonService } from '../../core/pokemon.service';
 import { Pokemon } from '../../shared/interfaces/pokemon.interface';
-import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,11 +11,12 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./pokemons.component.scss']
 })
 export class PokemonsComponent implements OnInit {
-  pokemons$: Observable<Pokemon[]> | undefined;
-  titles: string[] = ['ID', 'Nombre', 'Imagen', 'Movimiento'];
-  pokemonData: any[] = [];
-  showModal: boolean = false;
+  pokemons: Pokemon[] = [];
   selectedPokemon: Pokemon | null = null;
+  showModal: boolean = false;
+  titlesTablePokemons: string[] = ['ID', 'Nombre', 'Imagen', 'Movimientos'];
+  isLoading: boolean = true;
+  errorMessage: string | null = null;
 
   constructor(private pokemonService: PokemonService) { }
 
@@ -30,24 +30,22 @@ export class PokemonsComponent implements OnInit {
     this.selectedPokemon = null;
   }
 
-  ngOnInit(): void {
-    this.pokemons$ = this.pokemonService.getPokemons();
-    this.pokemons$.subscribe(async (pokemons) => {
-      this.pokemonData = await Promise.all(
-        pokemons.map(async (pokemon) => {
-          const movementNames = await Promise.all(
-            pokemon.moves.map((moveId: number) =>
-              this.pokemonService.getMoveNameById(moveId)
-            )
-          );
-          return {
-            'ID': pokemon.id,
-            'Nombre': pokemon.name,
-            'Imagen': `<img src="${pokemon.image}" alt="${pokemon.name}" width="50">`,
-            'Movimiento': movementNames.filter((name) => name !== null).join(', ') // TODO: Mostrar nombre del movimiento
-          };
-        })
-      );
+  ngOnInit() {
+    this.pokemonService.getPokemons().subscribe({
+      next: (data) => {
+        console.log('Pokemons antes de transformar:', data);
+        this.pokemons = data.map((pokemon) => ({
+          ...pokemon,
+          moves: pokemon.moves.map((move: any) => move.id)
+        }));
+        console.log('Pokemons después de transformar:', this.pokemons);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar los Pokémon:', error);
+        this.errorMessage = 'Error al cargar los Pokémon.';
+        this.isLoading = false;
+      }
     });
   }
 }

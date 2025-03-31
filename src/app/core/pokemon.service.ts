@@ -11,6 +11,7 @@ import { Pokemon } from '../shared/interfaces/pokemon.interface';
 export class PokemonService {
   private pokemonsCollection = 'pokemons';
   private movesCollection = 'moves';
+  moveCache: any;
 
   constructor(private firebaseService: FirebaseService) { }
 
@@ -24,9 +25,15 @@ export class PokemonService {
     return this.firebaseService.getCollection(this.movesCollection, 0);
   }
 
-  // TODO: Obtener el nombre del movimiento segun su ID
-  async getMoveNameById(moveId: number): Promise<string | null> {
+  // Entra el ID del movimiento y devuelve el nombre del movimiento
+  async getMoveName(moveId: number): Promise<string | null> {
+    if (this.moveCache.has(moveId)) {
+      return this.moveCache.get(moveId)!;
+    }
+
     const move = await this.firebaseService.getDocumentById(this.movesCollection, moveId.toString());
-    return move ? move.name : null;
+    const moveName = move ? move.name : null;
+    this.moveCache.set(moveId, moveName);
+    return moveName;
   }
 }
